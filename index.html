@@ -278,20 +278,20 @@ const SUPABASE_URL  = 'https://gcvebwfmkubgwnyztdml.supabase.co';
 const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdjdmVid2Zta3ViZ3dueXp0ZG1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDQzNzMsImV4cCI6MjA4OTY4MDM3M30.gkLTycTKrV7cD0NZUfMydhvHlZD54T7lkEi5f7F5_o8';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ── SITE CONFIG — edit here only ──
-const CFG = {
-  handle:  'Pepepepelegends',          // your X username (no @)
-  tweetId: '2032213245218398607',      // ← paste your pinned tweet ID here
-  siteUrl: 'https://pepepepe.fun',
-};
+// ── CONFIG FROM SUPABASE ──
+let CFG = {};
+async function loadConfig() {
+  const { data, error } = await db.from('config').select('*').single();
+  if (error) { console.error('Config load failed', error); return; }
+  CFG = data;
+  document.getElementById('btn-follow').href  = `https://x.com/${CFG.handle}`;
+  document.getElementById('btn-like').href    = `https://x.com/i/status/${CFG.tweet_id}`;
+  document.getElementById('btn-comment').href = `https://x.com/i/status/${CFG.tweet_id}`;
+  document.querySelector('nav a.nav-btn').href = `https://x.com/${CFG.handle}`;
+}
+loadConfig();
 
-// Wire up task buttons
-document.getElementById('btn-follow').href  = `https://x.com/${CFG.handle}`;
-document.getElementById('btn-like').href    = `https://x.com/i/status/${CFG.tweetId}`;
-document.getElementById('btn-comment').href = `https://x.com/i/status/${CFG.tweetId}`;
-document.querySelector('nav a.nav-btn').href = `https://x.com/${CFG.handle}`;
 
-const LABELS = ['THE MUMMY', 'THE BALLER', 'THE SUIT', 'THE WRAPPED', 'THE PILOT', 'THE BOSS', 'THE BOSS', 'THE SOLDIER', 'THE GHOST', 'THE DEMON', 'THE WARRIOR'];
 
 // Build slideshow
 const ss = document.getElementById('slideshow');
@@ -377,7 +377,7 @@ async function submitForm() {
   }]);
   btn.textContent='SUBMIT'; btn.disabled=false;
   if(error){ document.getElementById('err-eth').textContent='Submission failed: '+error.message; return; }
-  const refLink = CFG.siteUrl + '/' + handle;
+  const refLink = CFG.site_url + '/' + handle;
   document.getElementById('conf-twitter').textContent='@'+handle;
   document.getElementById('conf-eth').textContent=eth;
   document.getElementById('refLinkInput').value=refLink;
