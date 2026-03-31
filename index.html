@@ -323,8 +323,8 @@ function goSlide(n) {
 }
 function nextSlide() { goSlide((current+1)%IMAGES.length); resetTimer(); }
 function prevSlide() { goSlide((current-1+IMAGES.length)%IMAGES.length); resetTimer(); }
-function resetTimer() { clearInterval(timer); timer = setInterval(nextSlide, 3000); }
-timer = setInterval(nextSlide, 3000);
+function resetTimer() { clearInterval(timer); timer = setInterval(nextSlide, 1800); }
+timer = setInterval(nextSlide, 1800);
 
 // Random confirm pepe
 document.getElementById('confirmPepe').src = IMAGES[Math.floor(Math.random()*IMAGES.length)];
