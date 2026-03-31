@@ -160,7 +160,7 @@
       <div class="tagline-box"><strong>Join the movement. Be a Pepe. Get whitelisted now.</strong></div>
       <div class="tagline-box">Bringing back the nostalgia of games through NFTs. One for all, all for one. Combining games + NFTs.</div>
       <button class="cta-btn" onclick="showPage('wl');setStep(1)">GET WHITELISTED</button>
-      <div class="limited">⚡ LIMITED SPOTS AVAILABLE · 48 HRS ONLY</div>
+
     </div>
   </div>
 
@@ -271,7 +271,13 @@
 </div>
 
 <script src="images.js"></script>
- 
+<script>
+
+// ── SUPABASE CONFIG ──
+const SUPABASE_URL  = 'https://gcvebwfmkubgwnyztdml.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdjdmVid2Zta3ViZ3dueXp0ZG1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDQzNzMsImV4cCI6MjA4OTY4MDM3M30.gkLTycTKrV7cD0NZUfMydhvHlZD54T7lkEi5f7F5_o8';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const LABELS = ['THE MUMMY', 'THE BALLER', 'THE SUIT', 'THE WRAPPED', 'THE PILOT', 'THE BOSS', 'THE BOSS', 'THE SOLDIER', 'THE GHOST', 'THE DEMON', 'THE WARRIOR'];
 
 // Build slideshow
@@ -342,16 +348,27 @@ function nextStep2() {
   if(!c){document.getElementById('err-comment').textContent='Paste your comment link';ok=false;}else document.getElementById('err-comment').textContent='';
   if(ok) setStep(3);
 }
-function submitForm() {
+async function submitForm() {
   const eth=document.getElementById('ethInput').value.trim();
   if(!eth||!eth.startsWith('0x')||eth.length<40){document.getElementById('err-eth').textContent='Enter a valid Ethereum address (0x...)';return;}
   document.getElementById('err-eth').textContent='';
   const handle=document.getElementById('twitterInput').value.trim().replace('@','');
-  const refLink='https://pepepepe.wtf/'+handle;
+  const btn=document.querySelector('#step3 .next-btn');
+  btn.textContent='SUBMITTING...'; btn.disabled=true;
+  const { error } = await db.from('whitelist').insert([{
+    twitter:      '@'+handle,
+    quote_link:   document.getElementById('quoteInput').value.trim(),
+    comment_link: document.getElementById('commentInput').value.trim(),
+    eth_address:  eth,
+    referred_by:  document.getElementById('referredInput').value.trim(),
+  }]);
+  btn.textContent='SUBMIT'; btn.disabled=false;
+  if(error){ document.getElementById('err-eth').textContent='Submission failed: '+error.message; return; }
+  const refLink='https://pepepepe.fun/'+handle;
   document.getElementById('conf-twitter').textContent='@'+handle;
   document.getElementById('conf-eth').textContent=eth;
   document.getElementById('refLinkInput').value=refLink;
-  document.getElementById('shareXBtn').href='https://twitter.com/intent/tweet?text='+encodeURIComponent('Just secured my Pepepepe WL spot 🐸 Free mint — 5555 Pepes on Ethereum. Get yours: '+refLink);
+  document.getElementById('shareXBtn').href='https://twitter.com/intent/tweet?text='+encodeURIComponent('Just secured my Pepepepe WL spot. Free mint — 5555 Pepes on Ethereum. Get yours: '+refLink);
   setStep(4);
 }
 function copyRef() {
