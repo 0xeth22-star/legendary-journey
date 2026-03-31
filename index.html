@@ -208,12 +208,12 @@
         <div class="task-card">
           <div><span class="task-num">1 </span><span class="task-title">FOLLOW @PEPEPEPE</span></div>
           <div class="task-desc">Follow us on X</div>
-          <a class="task-btn" href="https://x.com/Pepepepelegends" target="_blank">GO TO X →</a>
+          <a class="task-btn" id="btn-follow" href="#" target="_blank">GO TO X →</a>
         </div>
         <div class="task-card">
           <div><span class="task-num">2 </span><span class="task-title">LIKE & QUOTE</span></div>
           <div class="task-desc">Like and quote our pinned post</div>
-          <a class="task-btn" href="https://x.com/Pepepepelegends" target="_blank">VIEW PINNED POST →</a>
+          <a class="task-btn" id="btn-like" href="#" target="_blank">VIEW PINNED POST →</a>
           <label class="field-label">QUOTE LINK</label>
           <input type="text" id="quoteInput" placeholder="Paste your quote tweet link" style="margin-bottom:4px"/>
           <span class="error" id="err-quote"></span>
@@ -221,7 +221,7 @@
         <div class="task-card" style="margin-top:10px">
           <div><span class="task-num">3 </span><span class="task-title">TAG TWO FRIENDS</span></div>
           <div class="task-desc">Comment on our pinned post and tag 2 friends</div>
-          <a class="task-btn" href="https://x.com/Pepepepelegends" target="_blank">GO TO PINNED POST →</a>
+          <a class="task-btn" id="btn-comment" href="#" target="_blank">GO TO PINNED POST →</a>
           <label class="field-label">COMMENT LINK</label>
           <input type="text" id="commentInput" placeholder="Paste the link to your comment" style="margin-bottom:4px"/>
           <span class="error" id="err-comment"></span>
@@ -278,6 +278,20 @@ const SUPABASE_URL  = 'https://gcvebwfmkubgwnyztdml.supabase.co';
 const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdjdmVid2Zta3ViZ3dueXp0ZG1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDQzNzMsImV4cCI6MjA4OTY4MDM3M30.gkLTycTKrV7cD0NZUfMydhvHlZD54T7lkEi5f7F5_o8';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// ── SITE CONFIG — edit here only ──
+const CFG = {
+  handle:  'Pepepepelegends',          // your X username (no @)
+  tweetId: '2032213245218398607',      // ← paste your pinned tweet ID here
+  siteUrl: 'https://pepepepe.fun',
+};
+
+// Wire up task buttons
+document.getElementById('btn-follow').href  = `https://x.com/${CFG.handle}`;
+document.getElementById('btn-like').href    = `https://x.com/i/status/${CFG.tweetId}`;
+document.getElementById('btn-comment').href = `https://x.com/i/status/${CFG.tweetId}`;
+document.querySelector('nav a.nav-btn').href = `https://x.com/${CFG.handle}`;
+
+const LABELS = ['THE MUMMY', 'THE BALLER', 'THE SUIT', 'THE WRAPPED', 'THE PILOT', 'THE BOSS', 'THE BOSS', 'THE SOLDIER', 'THE GHOST', 'THE DEMON', 'THE WARRIOR'];
 
 // Build slideshow
 const ss = document.getElementById('slideshow');
@@ -363,7 +377,7 @@ async function submitForm() {
   }]);
   btn.textContent='SUBMIT'; btn.disabled=false;
   if(error){ document.getElementById('err-eth').textContent='Submission failed: '+error.message; return; }
-  const refLink='https://pepepepe.fun/'+handle;
+  const refLink = CFG.siteUrl + '/' + handle;
   document.getElementById('conf-twitter').textContent='@'+handle;
   document.getElementById('conf-eth').textContent=eth;
   document.getElementById('refLinkInput').value=refLink;
